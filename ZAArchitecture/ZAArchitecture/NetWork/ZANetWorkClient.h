@@ -7,10 +7,33 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ZANetWorkRquest.h"
 #import "ZAFileConfig.h"
+#import "ZAError.h"
 
+typedef NS_ENUM(NSInteger, ZAReqCodeType) {
+    
+    ZAReqCode_Success = 0,
+};
 
+/**
+ 请求成功block
+ */
+typedef void (^RequestSuccessBlock)(id responseObj, NSString *resultMsg, ZAReqCodeType code);
+
+/**
+ 请求失败block
+ */
+typedef void (^RequestFailureBlock) (ZAError *error);
+
+/**
+ 请求响应block
+ */
+typedef void (^ResponseBlock)(id dataObj, ZAError *error);
+
+/**
+ 监听进度响应block
+ */
+typedef void (^ProgressBlock)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite);
 
 @protocol ZANetWorkClientDelegate <NSObject>
 
@@ -38,20 +61,13 @@
 /**
  下载文件，监听下载进度
  */
-- (void)downloadRequest:(NSString *)url tag:(NSInteger)tag successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
+- (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
 
-/**
- 文件上传
- */
-- (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig tag:(NSInteger)tag success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler;
+- (void)uploadRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler;
 
-/**
- 文件上传，监听上传进度
- */
 - (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
 
 
-- (void)addRequest:(ZANetWorkRquest *)request;
 - (void)cancelRequest:(NSInteger)tag;
 - (void)cancelAllRequests;
 
