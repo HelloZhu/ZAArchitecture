@@ -105,8 +105,14 @@ NSString *const ErrorCode_key = @"errorCode";
                 ZAReqCodeType resultCode = [[dic objectForKey:ErrorCode_key] integerValue];
                 NSString      *resultMsg = [dic objectForKey:Msg_key];
                 
+                ZAError *myError = nil;
+                if (resultCode != ZAReqCode_Success) {
+                    myError = [[ZAError alloc] init];
+                    myError.errorCode = resultCode;
+                    myError.errorMsg = resultMsg;
+                }
                 if (_delegate && [_delegate respondsToSelector:@selector(requestSuccess:error:tag:)]){
-                    [_delegate requestSuccess:responeObejct error:nil tag:operation.tag];
+                    [_delegate requestSuccess:responeObejct error:myError tag:operation.tag];
                 }
                 BLOCK_SAFE_RUN(successHandler,resultData, resultMsg, resultCode);
                 
