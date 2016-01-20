@@ -12,6 +12,7 @@
 
 typedef NS_ENUM(NSInteger, ZAReqCodeType) {
     
+    ZAReqCode_NetNotAvailable   = -1,
     ZAReqCode_Success = 0,
 };
 

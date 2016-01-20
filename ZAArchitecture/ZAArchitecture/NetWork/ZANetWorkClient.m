@@ -53,6 +53,12 @@ NSString *const ErrorCode_key = @"errorCode";
 
 - (void)GETRequest:(NSString *)url params:(NSDictionary *)params tag:(NSInteger)tag success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler
 {
+    if (![ZANetWorkClient checkNetworkStatus]) {
+        ZAError *error = [ZANetWorkClient netNotAvailableError];
+        BLOCK_SAFE_RUN(failureHandler, error);
+        return;
+    }
+    
     AFHTTPRequestOperationManager *manager = [ZANetWorkClient AFRequstManager];
     
     AFHTTPRequestOperation *requestOperation = [manager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -66,6 +72,12 @@ NSString *const ErrorCode_key = @"errorCode";
 
 - (void)POSTRequest:(NSString *)url params:(NSDictionary *)params tag:(NSInteger)tag success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler
 {
+    if (![ZANetWorkClient checkNetworkStatus]) {
+        ZAError *error = [ZANetWorkClient netNotAvailableError];
+        BLOCK_SAFE_RUN(failureHandler, error);
+        return;
+    }
+    
     AFHTTPRequestOperationManager *manager = [ZANetWorkClient AFRequstManager];
     
     AFHTTPRequestOperation *requestOperation = [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -117,7 +129,6 @@ NSString *const ErrorCode_key = @"errorCode";
                 [_delegate requestFail:myError tag:operation.tag];
             }
             BLOCK_SAFE_RUN(failureHandler, myError);
-            
         }
         
     }else{
@@ -134,6 +145,10 @@ NSString *const ErrorCode_key = @"errorCode";
 
 - (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler
 {
+    if (![ZANetWorkClient checkNetworkStatus]) {
+        ZAError *error = [ZANetWorkClient netNotAvailableError];
+        BLOCK_SAFE_RUN(completionHandler, nil,error);
+    }
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:sessionConfiguration];
     
@@ -148,6 +163,14 @@ NSString *const ErrorCode_key = @"errorCode";
         
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath, NSError * _Nonnull error){
         
+        if (error){
+            ZAError *myError = [[ZAError alloc] init];
+            myError.error = error;
+            myError.errorCode = error.code;
+            BLOCK_SAFE_RUN(completionHandler, response, myError);
+        }else{
+            BLOCK_SAFE_RUN(completionHandler, response, nil);
+        }
     }];
     
     [manager setDownloadTaskDidWriteDataBlock:^(NSURLSession * _Nonnull session, NSURLSessionDownloadTask * _Nonnull downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
@@ -167,6 +190,11 @@ NSString *const ErrorCode_key = @"errorCode";
  */
 - (void)uploadRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler {
     
+    if (![ZANetWorkClient checkNetworkStatus]) {
+        ZAError *error = [ZANetWorkClient netNotAvailableError];
+        BLOCK_SAFE_RUN(failureHandler,error);
+    }
+    
     AFHTTPRequestOperationManager *manager = [ZANetWorkClient AFRequstManager];
     
      AFHTTPRequestOperation *requestOperation = [manager POST:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
@@ -181,7 +209,7 @@ NSString *const ErrorCode_key = @"errorCode";
         [self handleRequestResult:operation responeObejct:error success:successHandler failure:failureHandler];
     }];
     
-    [self removeOperation:requestOperation];
+    [self addOperation:requestOperation];
 }
 
 
@@ -189,6 +217,11 @@ NSString *const ErrorCode_key = @"errorCode";
  上传文件，监听上传进度
  */
 - (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler {
+    
+    if (![ZANetWorkClient checkNetworkStatus]) {
+        ZAError *error = [ZANetWorkClient netNotAvailableError];
+        BLOCK_SAFE_RUN(completionHandler, nil,error);
+    }
     
     NSMutableURLRequest *request = [[AFHTTPRequestSerializer serializer] multipartFormRequestWithMethod:@"POST" URLString:url parameters:params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
         
@@ -287,5 +320,9 @@ NSString *const ErrorCode_key = @"errorCode";
     return isNetworkUse;
 }
 
++ (ZAError *)netNotAvailableError
+{
+    return [ZAError errorWithError:nil code:ZAReqCode_NetNotAvailable msg:@"网络不可用"];
+}
 
 @end

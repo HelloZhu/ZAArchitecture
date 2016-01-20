@@ -10,4 +10,14 @@
 
 @implementation ZAError
 
++ (instancetype)errorWithError:(NSError *)error code:(NSInteger)code msg:(NSString *)msg
+{
+    ZAError *myError = [[ZAError alloc] init];
+    myError.error = error;
+    myError.errorCode = code;
+    myError.errorMsg = msg;
+    
+    return myError;
+}
+
 @end

@@ -12,6 +12,8 @@
 
 @property (nonatomic, strong) NSError *error;
 @property (nonatomic, assign) NSInteger errorCode;
-@property (nonatomic, assign) NSInteger errorMsg;
+@property (nonatomic, copy) NSString *errorMsg;
+
++ (instancetype)errorWithError:(NSError *)error code:(NSInteger)code msg:(NSString *)msg;
 
 @end

@@ -8,6 +8,7 @@
 
 #import "BaseViewController.h"
 #import "ZANetWorkClient.h"
+#import "UserEntity.h"
 
 @interface BaseViewController ()<ZANetWorkClientDelegate>
 
@@ -20,6 +21,8 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     [ZANetWorkClient sharedInstance].delegate = self;
+    
+    [self testDB];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -37,6 +40,17 @@
 - (void)requestFail:(ZAError *)error tag:(NSInteger)tag
 {
     
+}
+
+#warning mark - DBTest
+- (void)testDB
+{
+    UserEntity *user = [[UserEntity alloc] initWithDB];
+    user.pk = 10;
+    user.name = @"zhangsan";
+    user.age = 20;
+    user.houseCount = @(50);
+    [user save];
 }
 
 @end
