@@ -47,6 +47,7 @@
 		20C486501C4E1CD200C31AE5 /* BaseEntity+DataBase.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C4864F1C4E1CD200C31AE5 /* BaseEntity+DataBase.m */; };
 		20C486541C4E220500C31AE5 /* ZADBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C486531C4E220500C31AE5 /* ZADBHelper.m */; };
 		20C486571C4E355400C31AE5 /* UserEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 20C486561C4E355400C31AE5 /* UserEntity.m */; };
+		20D07ACA1C964D1D00DA45B4 /* ZAResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 20D07AC91C964D1D00DA45B4 /* ZAResponse.m */; };
 		20DEAA2E1C3F98C900516514 /* ZAError.m in Sources */ = {isa = PBXBuildFile; fileRef = 20DEAA2D1C3F98C900516514 /* ZAError.m */; };
 		20DEAA311C3F993300516514 /* ZAFileConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 20DEAA301C3F993300516514 /* ZAFileConfig.m */; };
 		20DEAA341C3F9A0900516514 /* ZANetWorkClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 20DEAA331C3F9A0900516514 /* ZANetWorkClient.m */; };
@@ -148,6 +149,8 @@
 		20C486531C4E220500C31AE5 /* ZADBHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZADBHelper.m; sourceTree = "<group>"; };
 		20C486551C4E355400C31AE5 /* UserEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserEntity.h; sourceTree = "<group>"; };
 		20C486561C4E355400C31AE5 /* UserEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserEntity.m; sourceTree = "<group>"; };
+		20D07AC81C964D1D00DA45B4 /* ZAResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZAResponse.h; sourceTree = "<group>"; };
+		20D07AC91C964D1D00DA45B4 /* ZAResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZAResponse.m; sourceTree = "<group>"; };
 		20DEAA2C1C3F98C900516514 /* ZAError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZAError.h; sourceTree = "<group>"; };
 		20DEAA2D1C3F98C900516514 /* ZAError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZAError.m; sourceTree = "<group>"; };
 		20DEAA2F1C3F993300516514 /* ZAFileConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZAFileConfig.h; sourceTree = "<group>"; };
@@ -208,9 +211,9 @@
 			children = (
 				20B6F9961C3E4B930007DDD9 /* AppDelegate.h */,
 				20B6F9971C3E4B930007DDD9 /* AppDelegate.m */,
-				20C486511C4E21D200C31AE5 /* DataBase */,
-				20C4864A1C4E1B8E00C31AE5 /* Model */,
 				20B6F9C71C3E4C170007DDD9 /* ViewController */,
+				20C4864A1C4E1B8E00C31AE5 /* Model */,
+				20C486511C4E21D200C31AE5 /* DataBase */,
 				20B6F9C81C3E4C420007DDD9 /* NetWork */,
 				20B6F9C61C3E4C170007DDD9 /* ThirdPartSDK */,
 				20B6F99C1C3E4B930007DDD9 /* Main.storyboard */,
@@ -277,6 +280,8 @@
 				20DEAA301C3F993300516514 /* ZAFileConfig.m */,
 				20BA30481C43565500CE0343 /* AFHTTPRequestOperation+Tag.h */,
 				20BA30491C43565500CE0343 /* AFHTTPRequestOperation+Tag.m */,
+				20D07AC81C964D1D00DA45B4 /* ZAResponse.h */,
+				20D07AC91C964D1D00DA45B4 /* ZAResponse.m */,
 			);
 			path = NetWork;
 			sourceTree = "<group>";
@@ -545,6 +550,7 @@
 				20B6F9F51C3E4CFF0007DDD9 /* AFHTTPRequestOperation.m in Sources */,
 				20DEAA341C3F9A0900516514 /* ZANetWorkClient.m in Sources */,
 				20B6FA061C3E4CFF0007DDD9 /* UIRefreshControl+AFNetworking.m in Sources */,
+				20D07ACA1C964D1D00DA45B4 /* ZAResponse.m in Sources */,
 				20B6F9981C3E4B930007DDD9 /* AppDelegate.m in Sources */,
 				20B6F9FB1C3E4CFF0007DDD9 /* AFURLRequestSerialization.m in Sources */,
 				20DEAA2E1C3F98C900516514 /* ZAError.m in Sources */,

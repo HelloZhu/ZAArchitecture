@@ -100,36 +100,35 @@ NSString *const ErrorCode_key = @"errorCode";
             
             if ([responeObejct isKindOfClass:[NSDictionary class]]){
                 
-                NSDictionary *dic = (NSDictionary *)responeObejct;
-                id            resultData = [dic objectForKey:Data_key];
+                NSDictionary  *dic       = (NSDictionary *)responeObejct;
+                id            resultData = [dic  objectForKey:Data_key];
                 ZAReqCodeType resultCode = [[dic objectForKey:ErrorCode_key] integerValue];
-                NSString      *resultMsg = [dic objectForKey:Msg_key];
+                NSString      *resultMsg = [dic  objectForKey:Msg_key];
                 
                 ZAError *myError = nil;
                 if (resultCode != ZAReqCode_Success) {
-                    myError = [[ZAError alloc] init];
-                    myError.errorCode = resultCode;
-                    myError.errorMsg = resultMsg;
+                    myError = [ZAError errorWithError:nil code:resultCode msg:resultMsg];
                 }
+                
+                ZAResponse *zaResponse = [ZAResponse responseWith:resultData msg:resultMsg code:resultCode];
                 if (_delegate && [_delegate respondsToSelector:@selector(requestSuccess:error:tag:)]){
                     [_delegate requestSuccess:responeObejct error:myError tag:operation.tag];
                 }
-                BLOCK_SAFE_RUN(successHandler,resultData, resultMsg, resultCode);
+                BLOCK_SAFE_RUN(successHandler,zaResponse);
                 
             }else{
                 
+                 ZAResponse *zaResponse = [ZAResponse responseWith:responeObejct msg:nil code:ZAReqCode_Success];
                 if (_delegate && [_delegate respondsToSelector:@selector(requestSuccess:error:tag:)]){
                     [_delegate requestSuccess:responeObejct error:nil tag:operation.tag];
                 }
-                BLOCK_SAFE_RUN(successHandler,responeObejct, nil, ZAReqCode_Success);
+                BLOCK_SAFE_RUN(successHandler,zaResponse);
             }
             
         }else {
             
             NSError *sError   = (NSError *)responeObejct;
-            ZAError *myError  = [[ZAError alloc] init];
-            myError.error     = responeObejct;
-            myError.errorCode = sError.code;
+            ZAError *myError = [ZAError errorWithError:sError code:sError.code msg:nil];
             
             if (_delegate && [_delegate respondsToSelector:@selector(requestFail:tag:)]){
                 [_delegate requestFail:myError tag:operation.tag];
@@ -149,11 +148,11 @@ NSString *const ErrorCode_key = @"errorCode";
 }
 
 
-- (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler
+- (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(void (^)(NSURLResponse *response, NSURL *filePath, NSError *error))completionHandler
 {
     if (![ZANetWorkClient checkNetworkStatus]) {
-        ZAError *error = [ZANetWorkClient netNotAvailableError];
-        BLOCK_SAFE_RUN(completionHandler, nil,error);
+        BLOCK_SAFE_RUN(completionHandler, nil,nil,nil);
+        return;
     }
     NSURLSessionConfiguration *sessionConfiguration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:sessionConfiguration];
@@ -168,15 +167,7 @@ NSString *const ErrorCode_key = @"errorCode";
         return [documentUrl URLByAppendingPathComponent:[response suggestedFilename]];
         
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath, NSError * _Nonnull error){
-        
-        if (error){
-            ZAError *myError = [[ZAError alloc] init];
-            myError.error = error;
-            myError.errorCode = error.code;
-            BLOCK_SAFE_RUN(completionHandler, response, myError);
-        }else{
-            BLOCK_SAFE_RUN(completionHandler, response, nil);
-        }
+        BLOCK_SAFE_RUN(completionHandler, response,filePath,error);
     }];
     
     [manager setDownloadTaskDidWriteDataBlock:^(NSURLSession * _Nonnull session, NSURLSessionDownloadTask * _Nonnull downloadTask, int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite) {
@@ -222,7 +213,7 @@ NSString *const ErrorCode_key = @"errorCode";
 /**
  上传文件，监听上传进度
  */
-- (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler {
+- (void)uploadRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler {
     
     if (![ZANetWorkClient checkNetworkStatus]) {
         ZAError *error = [ZANetWorkClient netNotAvailableError];
@@ -248,7 +239,8 @@ NSString *const ErrorCode_key = @"errorCode";
         BLOCK_SAFE_RUN(completionHandler, responseObject, nil);
     } failure:^(AFHTTPRequestOperation * _Nonnull operation, NSError * _Nonnull error) {
         
-         BLOCK_SAFE_RUN(completionHandler, error, nil);
+        ZAError *zaError = [ZAError errorWithError:error code:ZAReqCode_UploadFail msg:nil];
+        BLOCK_SAFE_RUN(completionHandler, nil, zaError);
     }];
     
     [operation start];

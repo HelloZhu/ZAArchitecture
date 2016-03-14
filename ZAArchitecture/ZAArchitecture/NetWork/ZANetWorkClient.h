@@ -9,17 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "ZAFileConfig.h"
 #import "ZAError.h"
+#import "ZAResponse.h"
 
-typedef NS_ENUM(NSInteger, ZAReqCodeType) {
-    
-    ZAReqCode_NetNotAvailable   = -1,
-    ZAReqCode_Success = 0,
-};
+
 
 /**
  请求成功block
  */
-typedef void (^RequestSuccessBlock)(id responseObj, NSString *resultMsg, ZAReqCodeType code);
+typedef void (^RequestSuccessBlock)(ZAResponse *responseObjc);
 
 /**
  请求失败block
@@ -29,7 +26,7 @@ typedef void (^RequestFailureBlock) (ZAError *error);
 /**
  请求响应block
  */
-typedef void (^ResponseBlock)(id dataObj, ZAError *error);
+typedef void (^ResponseBlock)(ZAResponse *responseObjc, ZAError *error);
 
 /**
  监听进度响应block
@@ -62,11 +59,11 @@ typedef void (^ProgressBlock)(int64_t bytesWritten, int64_t totalBytesWritten, i
 /**
  下载文件，监听下载进度
  */
-- (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
+- (void)downloadRequest:(NSString *)url successAndProgress:(ProgressBlock)progressHandler complete:(void (^)(NSURLResponse *response, NSURL *filePath, NSError *error))completionHandler;
 
 - (void)uploadRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig success:(RequestSuccessBlock)successHandler failure:(RequestFailureBlock)failureHandler;
 
-- (void)updateRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
+- (void)uploadRequest:(NSString *)url params:(NSDictionary *)params fileConfig:(ZAFileConfig *)fileConfig successAndProgress:(ProgressBlock)progressHandler complete:(ResponseBlock)completionHandler;
 
 
 - (void)cancelRequest:(NSInteger)tag;
